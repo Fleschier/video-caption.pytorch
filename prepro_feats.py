@@ -28,8 +28,7 @@ def extract_frames(video, dst):
                                    '-vf', "scale=400:300",  # input file
                                    '-qscale:v', "2",  # quality for JPEG
                                    '{0}/%06d.jpg'.format(dst)]
-        subprocess.call(video_to_frames_command,
-                        stdout=ffmpeg_log, stderr=ffmpeg_log)
+        subprocess.call(video_to_frames_command,stdout=ffmpeg_log, stderr=ffmpeg_log)
 
 
 def extract_feats(params, model, load_image_fn):
@@ -40,11 +39,22 @@ def extract_feats(params, model, load_image_fn):
     if not os.path.isdir(dir_fc):
         os.mkdir(dir_fc)
     print("save video feats to %s" % (dir_fc))
-    video_list = glob.glob(os.path.join(params['video_path'], '*.mp4'))
+    pathPattern = os.path.join(params['video_path'], '*.mp4')
+    print("video path: ", pathPattern)  # data/train-videos/TrainValVideo\*.mp4, 错误出现在路径合成上。
+    # 要解决这个问题，就要在路径合成的前一个参数的末尾加上 ‘/’
+    video_list = glob.glob(pathPattern)     # bug: 获取的视频list为空 原因：路径问题。原作者默认路径写错了
+    print("=========== video_list: ", video_list[0])    # video_list:  data/train_videos/TrainValVideo\video0.mp4
+    # 貌似windows下使用glob获取到的路径只要是自动生成的都是反斜杠，而自己指定的又是斜杠，会冲突。。。
+    # 只能手动替换反斜杠为斜杠了
+
+    #print(len(video_list),"=================")
     for video in tqdm(video_list):
-        video_id = video.split("/")[-1].split(".")[0]
+        # video_id = video.split("/")[-1].split(".")[0]
+        video_id = video.split("/")[-1].split('\\')[-1].split(".")[0]   # 获取视频的名称，去掉后缀。由于之前生成的路径名称有反斜杠，故要加一步处理
+        print("=========== video_id: ", video_id)
         dst = params['model'] + '_' + video_id
-        extract_frames(video, dst)
+        print("=========== dst: ", dst) # ========== dst:  resnet152_TrainValVideo\video0
+        extract_frames(video, dst)      # 有问题**************************
 
         image_list = sorted(glob.glob(os.path.join(dst, '*.jpg')))
         samples = np.round(np.linspace(
@@ -69,12 +79,12 @@ if __name__ == '__main__':
     parser.add_argument("--gpu", dest='gpu', type=str, default='0',
                         help='Set CUDA_VISIBLE_DEVICES environment variable, optional')
     parser.add_argument("--output_dir", dest='output_dir', type=str,
-                        default='data/feats/resnet152', help='directory to store features')
+                        default='data/feats/resnet152/', help='directory to store features')
     parser.add_argument("--n_frame_steps", dest='n_frame_steps', type=int, default=40,
                         help='how many frames to sampler per video')
 
     parser.add_argument("--video_path", dest='video_path', type=str,
-                        default='data/train-video', help='path to video dataset')
+                        default='data/train_videos/TrainValVideo/', help='path to video dataset')
     parser.add_argument("--model", dest="model", type=str, default='resnet152',
                         help='the CNN model you want to use to extract_feats')
     

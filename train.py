@@ -52,6 +52,7 @@ def train(loader, model, crit, optimizer, lr_scheduler, opt, rl_crit=None):
             clip_grad_value_(model.parameters(), opt['grad_clip'])
             optimizer.step()
             train_loss = loss.item()
+            print("train_loss type: ==============>>  ",type(train_loss))
             torch.cuda.synchronize()
             iteration += 1
 

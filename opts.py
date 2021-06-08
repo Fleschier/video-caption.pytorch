@@ -134,10 +134,11 @@ def parse_opt():
         type=int,
         default=50,
         help='how often to save a model checkpoint (in epoch)?')
+        
     parser.add_argument(
         '--checkpoint_path',
         type=str,
-        default='save',
+        default='data/save',
         help='directory to store checkpointed models')
 
     parser.add_argument(
