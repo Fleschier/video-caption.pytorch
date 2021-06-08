@@ -76,7 +76,7 @@ def train(loader, model, crit, optimizer, lr_scheduler, opt, rl_crit=None):
 
 def main(opt):
     dataset = VideoDataset(opt, 'train')
-    dataloader = DataLoader(dataset, batch_size=opt["batch_size"], shuffle=True)
+    dataloader = DataLoader(dataset, batch_size=opt["batch_size"], shuffle=False)   # shuffle要设置为False
     opt["vocab_size"] = dataset.get_vocab_size()
     if opt["model"] == 'S2VTModel':
         model = S2VTModel(

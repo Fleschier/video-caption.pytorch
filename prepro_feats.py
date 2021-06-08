@@ -21,7 +21,7 @@ def extract_frames(video, dst):
             print(" cleanup: " + dst + "/")
             shutil.rmtree(dst)
         os.makedirs(dst)
-        video_to_frames_command = ["ffmpeg",
+        video_to_frames_command = ["ffmpeg",            # 这一步是终端调用ffmpeg,可在linux下操作.Windows未知
                                    # (optional) overwrite output file if it exists
                                    '-y',
                                    '-i', video,  # input file
@@ -49,8 +49,8 @@ def extract_feats(params, model, load_image_fn):
 
     #print(len(video_list),"=================")
     for video in tqdm(video_list):
-        # video_id = video.split("/")[-1].split(".")[0]
-        video_id = video.split("/")[-1].split('\\')[-1].split(".")[0]   # 获取视频的名称，去掉后缀。由于之前生成的路径名称有反斜杠，故要加一步处理
+        video_id = video.split("/")[-1].split(".")[0]  # 获取视频的名称，去掉后缀。
+        # video_id = video.split("/")[-1].split('\\')[-1].split(".")[0] # windows下需要额外去除反斜杠 由于之前生成的路径名称有反斜杠，故要加一步处理
         print("=========== video_id: ", video_id)
         dst = params['model'] + '_' + video_id
         print("=========== dst: ", dst) # ========== dst:  resnet152_TrainValVideo\video0
