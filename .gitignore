@@ -1,9 +1,11 @@
-feats/
+# feats/
 save*/
 results/
 *video*
-*.json
+# *.json
 *.ipynb
+*.mp4
+*.npy
 
 !scripts/*.py
 
