@@ -49,8 +49,8 @@ def extract_feats(params, model, load_image_fn):
 
     #print(len(video_list),"=================")
     for video in tqdm(video_list):
-        video_id = video.split("/")[-1].split(".")[0]  # 获取视频的名称，去掉后缀。
-        # video_id = video.split("/")[-1].split('\\')[-1].split(".")[0] # windows下需要额外去除反斜杠 由于之前生成的路径名称有反斜杠，故要加一步处理
+        # video_id = video.split("/")[-1].split(".")[0]  # 获取视频的名称，去掉后缀。
+        video_id = video.split("/")[-1].split('\\')[-1].split(".")[0] # windows下需要额外去除反斜杠 由于之前生成的路径名称有反斜杠，故要加一步处理
         print("=========== video_id: ", video_id)
         dst = params['model'] + '_' + video_id
         print("=========== dst: ", dst) # ========== dst:  resnet152_TrainValVideo\video0
@@ -84,7 +84,7 @@ if __name__ == '__main__':
                         help='how many frames to sampler per video')
 
     parser.add_argument("--video_path", dest='video_path', type=str,
-                        default='data/train_videos/TrainValVideo/', help='path to video dataset')
+                        default='data/train_videos/TrainValVideo/G_15000-G_15499/', help='path to video dataset')
     parser.add_argument("--model", dest="model", type=str, default='resnet152',
                         help='the CNN model you want to use to extract_feats')
     

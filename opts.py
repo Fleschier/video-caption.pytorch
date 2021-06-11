@@ -27,7 +27,7 @@ def parse_opt():
         default=['data/feats/resnet152/'],
         help='path to the directory containing the preprocessed fc feats')
 
-    parser.add_argument('--c3d_feats_dir', type=str, default='data/c3d_feats')
+    parser.add_argument('--c3d_feats_dir', type=str, default='data/c3d_feats/')
     parser.add_argument(
         '--with_c3d', type=int, default=0, help='whether to use c3d features')
 
@@ -40,7 +40,7 @@ def parse_opt():
 
     # Model settings
     parser.add_argument(
-        "--model", type=str, default='S2VTModel', help="with model to use")
+        "--model", type=str, default='S2VTAttModel', help="with model to use")
 
     parser.add_argument(
         "--max_len",
@@ -138,7 +138,7 @@ def parse_opt():
     parser.add_argument(
         '--checkpoint_path',
         type=str,
-        default='data/save',
+        default='data/save/',
         help='directory to store checkpointed models')
 
     parser.add_argument(

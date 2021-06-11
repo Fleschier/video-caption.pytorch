@@ -16,9 +16,24 @@ from torch.utils.data import DataLoader
 
 
 def train(loader, model, crit, optimizer, lr_scheduler, opt, rl_crit=None):
+
+    # 加载断点
+    start_epoch  = -1      # 上次训练的迭代次数。默认为-1
+    if(os.path.exists('data/save/model_score.txt')):       # 如果存在之前训练的模型，则先加载模型
+        
+        with open('data/save/model_score.txt') as f:
+            record = f.readlines()[-1]
+            print(f"last record: {record}")       # model_2700, loss: 1.793814
+            start_epoch = eval(record.split(',')[0][6:])
+            print(f"load success! start epoch = {start_epoch}")
+
+        checkPoint = torch.load(f'data/save/model_{start_epoch}.pth')  # 加载checkpoint
+        model.load_state_dict(checkPoint)
+
+    # 开始训练
     model.train()
     #model = nn.DataParallel(model)
-    for epoch in range(opt["epochs"]):
+    for epoch in range(start_epoch + 1, opt["epochs"]):
         lr_scheduler.step()
 
         iteration = 0
@@ -68,6 +83,8 @@ def train(loader, model, crit, optimizer, lr_scheduler, opt, rl_crit=None):
                                       'model_%d.pth' % (epoch))
             model_info_path = os.path.join(opt["checkpoint_path"],
                                            'model_score.txt')
+            
+            # 保存模型参数
             torch.save(model.state_dict(), model_path)
             print("model saved to %s" % (model_path))
             with open(model_info_path, 'a') as f:

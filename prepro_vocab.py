@@ -3,6 +3,10 @@ import json
 import argparse
 import numpy as np
 
+import os
+import glob
+
+from tqdm.std import tqdm
 
 def build_vocab(vids, params):
     count_thr = params['word_count_threshold']
@@ -62,12 +66,26 @@ def main(params):
     videos = json.load(open(params['input_json'], 'r'))['videos']
     for i in videos:
         out['videos'][i['split']].append(int(i['id']))
+
+    # 加入对目录中测试数据集的写入
+    pathPattern = os.path.join(params['test_video'], '*.mp4')
+    print("video path: ", pathPattern)  # data/train-videos/TrainValVideo\*.mp4, 错误出现在路径合成上。
+    # 要解决这个问题，就要在路径合成的前一个参数的末尾加上 ‘/’
+    video_list = glob.glob(pathPattern)
+    for video in tqdm(video_list):
+        id = video.split("/")[-1].split('\\')[-1].split(".")[0][2:] # windows下需要额外去除反斜杠 由于之前生成的路径名称有反斜杠 
+        out['videos']['test'].append(id)        # 不能转int，否则会丢弃前面的0
+
     json.dump(out, open(params['info_json'], 'w'))
     json.dump(video_caption, open(params['caption_json'], 'w'))
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+
+    # test video
+    parser.add_argument('--test_video', type=str, default='data/test_videos/TestVideo/', 
+                        help='path of test videos')
 
     # input json
     parser.add_argument('--input_json', type=str, default='data/videoDataInfo.json',
